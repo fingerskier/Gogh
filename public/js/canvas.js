@@ -7,6 +7,12 @@ const GoghCanvas = (() => {
   function loadSnapshot(base64) {
     const img = new Image();
     img.onload = () => {
+      if (mainCanvas.width !== img.width || mainCanvas.height !== img.height) {
+        mainCanvas.width = img.width;
+        mainCanvas.height = img.height;
+        previewCanvas.width = img.width;
+        previewCanvas.height = img.height;
+      }
       mainCtx.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
       mainCtx.drawImage(img, 0, 0);
     };

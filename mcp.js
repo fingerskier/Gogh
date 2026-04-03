@@ -3,7 +3,7 @@ const { StdioServerTransport } = require('@modelcontextprotocol/sdk/server/stdio
 const { z } = require('zod');
 const WebSocket = require('ws');
 
-const GOGH_URL = process.env.GOGH_URL || 'http://localhost:3000';
+const GOGH_URL = process.env.GOGH_URL || 'http://localhost:4644';
 const WS_URL = GOGH_URL.replace(/^http/, 'ws') + '/';
 
 let ws;
@@ -177,6 +177,32 @@ async function main() {
   server.tool('redo', 'Redo the last undone operation', {}, async () => {
     await sendAndWait({ type: 'redo' });
     return { content: [{ type: 'text', text: 'Redone' }] };
+  });
+
+  server.tool('open_file', 'Open an image file from disk onto the canvas', {
+    path: z.string().describe('Absolute or relative path to the image file'),
+  }, async ({ path }) => {
+    const resp = await fetch(`${GOGH_URL}/api/open`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path }),
+    });
+    const result = await resp.json();
+    if (!resp.ok) return { content: [{ type: 'text', text: `Error: ${result.error}` }], isError: true };
+    return { content: [{ type: 'text', text: `Opened ${result.file} (${result.width}x${result.height})` }] };
+  });
+
+  server.tool('save_file', 'Save the canvas as a PNG image file to disk', {
+    path: z.string().optional().describe('File path to save to (defaults to the currently open file)'),
+  }, async ({ path }) => {
+    const resp = await fetch(`${GOGH_URL}/api/save`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ path }),
+    });
+    const result = await resp.json();
+    if (!resp.ok) return { content: [{ type: 'text', text: `Error: ${result.error}` }], isError: true };
+    return { content: [{ type: 'text', text: `Saved to ${result.file}` }] };
   });
 
   const transport = new StdioServerTransport();

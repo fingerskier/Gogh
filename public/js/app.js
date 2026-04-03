@@ -54,11 +54,13 @@
   GoghWS.onInit = (msg) => {
     GoghCanvas.loadSnapshot(msg.snapshot);
     updateHistoryButtons(msg.info);
+    if (msg.info.currentFile) GoghIO.setCurrentFileFromServer(msg.info.currentFile);
   };
 
   GoghWS.onUpdate = (msg) => {
     GoghCanvas.loadSnapshot(msg.snapshot);
     updateHistoryButtons(msg.info);
+    if (msg.info.currentFile) GoghIO.setCurrentFileFromServer(msg.info.currentFile);
   };
 
   function updateHistoryButtons(info) {
@@ -70,23 +72,32 @@
   document.getElementById('undo-btn').addEventListener('click', () => GoghWS.sendUndo());
   document.getElementById('redo-btn').addEventListener('click', () => GoghWS.sendRedo());
 
-  // Import/Export
-  document.getElementById('export-btn').addEventListener('click', () => {
-    GoghIO.exportPng(GoghCanvas.mainCanvas);
+  // Open / Save via File System Access API
+  document.getElementById('open-btn').addEventListener('click', async () => {
+    try {
+      const file = await GoghIO.open();
+      const buf = await file.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(buf)));
+      GoghWS.sendOp({ type: 'paste', x: 0, y: 0, imageBase64: base64 });
+    } catch (err) {
+      if (err.name !== 'AbortError') alert('Open failed: ' + err.message);
+    }
   });
 
-  document.getElementById('import-btn').addEventListener('click', () => {
-    GoghIO.importImage((img) => {
-      // Draw image to a temp canvas to get base64
-      const tmp = document.createElement('canvas');
-      tmp.width = img.width;
-      tmp.height = img.height;
-      const tctx = tmp.getContext('2d');
-      tctx.drawImage(img, 0, 0);
-      const dataUrl = tmp.toDataURL('image/png');
-      const base64 = dataUrl.split(',')[1];
-      GoghWS.sendOp({ type: 'paste', x: 0, y: 0, imageBase64: base64 });
-    });
+  document.getElementById('save-btn').addEventListener('click', async () => {
+    try {
+      await GoghIO.save(GoghCanvas.mainCanvas);
+    } catch (err) {
+      if (err.name !== 'AbortError') alert('Save failed: ' + err.message);
+    }
+  });
+
+  document.getElementById('save-as-btn').addEventListener('click', async () => {
+    try {
+      await GoghIO.saveAs(GoghCanvas.mainCanvas);
+    } catch (err) {
+      if (err.name !== 'AbortError') alert('Save failed: ' + err.message);
+    }
   });
 
   document.getElementById('clear-btn').addEventListener('click', () => {
@@ -104,9 +115,15 @@
       } else if ((e.key === 'z' && e.shiftKey) || e.key === 'y') {
         e.preventDefault();
         GoghWS.sendRedo();
+      } else if (e.key === 's' && e.shiftKey) {
+        e.preventDefault();
+        document.getElementById('save-as-btn').click();
       } else if (e.key === 's') {
         e.preventDefault();
-        GoghIO.exportPng(GoghCanvas.mainCanvas);
+        document.getElementById('save-btn').click();
+      } else if (e.key === 'o') {
+        e.preventDefault();
+        document.getElementById('open-btn').click();
       }
       return;
     }

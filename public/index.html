@@ -37,9 +37,13 @@
     </div>
 
     <div class="tool-group">
-      <button id="import-btn" title="Import image">Import</button>
-      <button id="export-btn" title="Export as PNG (Ctrl+S)">Export</button>
+      <button id="open-btn" title="Open image (Ctrl+O)">Open</button>
+      <button id="save-btn" title="Save (Ctrl+S)">Save</button>
+      <button id="save-as-btn" title="Save As (Ctrl+Shift+S)">Save As</button>
       <button id="clear-btn" title="Clear canvas">Clear</button>
+    </div>
+    <div class="tool-group">
+      <span id="file-name" title="Current file"></span>
     </div>
   </div>
 
@@ -48,7 +52,6 @@
     <canvas id="preview-canvas" width="800" height="600"></canvas>
   </div>
 
-  <input type="file" id="file-input" accept="image/*" style="display: none">
 
   <script src="js/ws.js"></script>
   <script src="js/tools.js"></script>
