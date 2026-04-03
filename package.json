@@ -1,0 +1,16 @@
+{
+  "name": "gogh",
+  "version": "0.1.0",
+  "description": "Agentic image editor with Web UI and MCP server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "mcp": "node mcp.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "canvas": "^3.1.0",
+    "express": "^5.1.0",
+    "ws": "^8.18.0"
+  }
+}
