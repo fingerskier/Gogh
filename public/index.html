@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gogh</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="toolbar">
+    <div class="tool-group">
+      <button class="tool-btn active" data-tool="pen" title="Pen (P)">&#9998;</button>
+      <button class="tool-btn" data-tool="line" title="Line (L)">&#9585;</button>
+      <button class="tool-btn" data-tool="rect" title="Rectangle (R)">&#9633;</button>
+      <button class="tool-btn" data-tool="ellipse" title="Ellipse (E)">&#9675;</button>
+      <button class="tool-btn" data-tool="fill" title="Fill (F)">&#9043;</button>
+      <button class="tool-btn" data-tool="select" title="Select (S)">&#11036;</button>
+      <button class="tool-btn" data-tool="eraser" title="Eraser (X)">&#9746;</button>
+    </div>
+
+    <div class="tool-group">
+      <label title="Color">
+        <input type="color" id="color-picker" value="#000000">
+      </label>
+      <label title="Stroke width">
+        <input type="range" id="stroke-width" min="1" max="50" value="3">
+        <span id="stroke-width-label">3</span>
+      </label>
+      <label>
+        <input type="checkbox" id="filled-checkbox"> Fill
+      </label>
+    </div>
+
+    <div class="tool-group">
+      <button id="undo-btn" title="Undo (Ctrl+Z)" disabled>&#8630; Undo</button>
+      <button id="redo-btn" title="Redo (Ctrl+Shift+Z)" disabled>&#8631; Redo</button>
+    </div>
+
+    <div class="tool-group">
+      <button id="import-btn" title="Import image">Import</button>
+      <button id="export-btn" title="Export as PNG (Ctrl+S)">Export</button>
+      <button id="clear-btn" title="Clear canvas">Clear</button>
+    </div>
+  </div>
+
+  <div id="canvas-container">
+    <canvas id="main-canvas" width="800" height="600"></canvas>
+    <canvas id="preview-canvas" width="800" height="600"></canvas>
+  </div>
+
+  <input type="file" id="file-input" accept="image/*" style="display: none">
+
+  <script src="js/ws.js"></script>
+  <script src="js/tools.js"></script>
+  <script src="js/io.js"></script>
+  <script src="js/canvas.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
